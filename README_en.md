@@ -40,7 +40,7 @@ Below is how a traditional RLHF / rule-book persona compares to **WeftPersona** 
 
 ---
 
-## 🏛️ 2. Core Architecture: Four-Layer Decoupling & Natural Metabolism
+## 🏛 2. Core Architecture: Four-Layer Decoupling & Natural Metabolism
 
 We decompose a long-lived virtual persona into a four-layer closed loop of **Declarative Memory × Affective Dynamics × Procedural Cognitive Appraisal × Subjectivity & Persona Expression**:
 
@@ -123,7 +123,7 @@ While refining [`prompts/BEHAVIOR.md`](prompts/BEHAVIOR.md), we benchmarked four
 
 ---
 
-## 🗺️ 4. Documentation & Source Navigation
+## 🗺 4. Documentation & Source Navigation
 
 ### 1. Design Methodology, Empirical Laws & Live Samples (`docs/en/` & `prompts/`)
 - 💬 **[Live Benchmark Samples: 4-Model Side-by-Side & Ablation Snapshots](docs/en/benchmark-samples.md)**: **Start here**—8 representative scenarios with verbatim CoT excerpts, replies across DeepSeek / Kimi / GPT / Gemini, `inner_state.py` JSON transitions, `v5 → v10` failure snapshots (including DeepSeek calling `memory` to hold a grudge), and the 4 known residual limitations.
