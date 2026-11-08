@@ -1,0 +1,4 @@
+name: sanae_mem
+version: 0.2.0
+description: "Local SQLite and Chroma memory provider with gated recall and compaction."
+hooks: []

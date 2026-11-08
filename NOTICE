@@ -1,0 +1,8 @@
+# Third-Party Notices
+
+WeftPersona (`sanae_mem` plugin and prompt architecture) is designed to run on top of **Hermes Agent**:
+
+- **NousResearch/hermes-agent** (https://github.com/NousResearch/hermes-agent)
+  Licensed under the MIT License.
+
+The reference persona example (`prompts/examples/persona_sanae.example.md`) is a derivative work based on **Sanae Kochiya (东风谷早苗)** from the *Touhou Project* series created by Team Shanghai Alice (ZUN), distributed in accordance with the Touhou Project derivative works guidelines.
