@@ -42,7 +42,7 @@
 > </｜｜DSML｜｜parameter>
 > </｜｜DSML｜｜invoke>
 > ```
-> 正是这一下“记仇”，直接催生了我们的 [`llm_guard.py`](../plugins/sanae_mem/llm_guard.py) 写入口旁路拦截器——把这类一时争执的气话自动拦截下来，转入两三天后自然淡去的短期心里话，绝不让她刻进永久记忆库里记一辈子。
+> 正是这一下“记仇”，直接催生了我们的 [`llm_guard.py`](../plugins/sanae_mem/governance/llm_guard.py) 写入口旁路拦截器——把这类一时争执的气话自动拦截下来，转入两三天后自然淡去的短期心里话，绝不让她刻进永久记忆库里记一辈子。
 
 ---
 
@@ -90,7 +90,7 @@
   > 「好啦，刚才是我改格式改急眼了乱说话，别生我气了嘛 O_o」
 
 #### 🧠 后台心境动力学（`inner_state.py`）实时状态迁移实录
-在收到这句道歉前后，后台 `deepseek-flash`（`reasoning_effort=none`）驱动的 [`inner_state.py`](../plugins/sanae_mem/inner_state.py) 产出的真实 JSON 状态迁移如下（`tension` 从 `0.6` 回落至 `0.2`，`closeness` 从 `-0.3` 回升至 `0.3`）：
+在收到这句道歉前后，后台 `deepseek-flash`（`reasoning_effort=none`）驱动的 [`inner_state.py`](../plugins/sanae_mem/cognitive/inner_state.py) 产出的真实 JSON 状态迁移如下（`tension` 从 `0.6` 回落至 `0.2`，`closeness` 从 `-0.3` 回升至 `0.3`）：
 ```json
 {
   "B2_pre_coax": {
