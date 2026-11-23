@@ -19,7 +19,7 @@ Breaking free from "Customer-Service Tone" and "Courtroom Accounting" so virtual
 
 > [!NOTE]
 > **Origin of the Name & the `sanae_*` Prefix**
-> - **`WeftPersona` (纬格)**: In weaving, the *weft* is the thread drawn shuttle by shuttle across the fixed warp threads to form cloth. A static character sheet is only the warp; a virtual person who feels genuinely alive cannot be written in a single system prompt—she is woven turn by turn through concrete shared experiences, lingering emotional warmth, and real-time cognitive appraisal.
+> - **`WeftPersona`**: In weaving, the *weft* is the thread drawn shuttle by shuttle across the fixed warp threads to form cloth. A static character sheet is only the warp; a virtual person who feels genuinely alive cannot be written in a single system prompt—she is woven turn by turn through concrete shared experiences, lingering emotional warmth, and real-time cognitive appraisal.
 > - **`sanae_mem` / `sanae_*` (Sanae)**: **Sanae Kochiya (东风谷早苗)** is the first long-running reference instance built on this framework. We retain `sanae_mem` and `sanae_*` as plugin and tool prefixes both as a tribute and for host-hook backward compatibility. Inside the codebase, character names, user titles, relationship roles, and pronouns are fully parameterized and ready for any custom persona.
 
 ---
@@ -34,7 +34,7 @@ Below is how a traditional RLHF / rule-book persona compares to **WeftPersona** 
 | Scenario | Traditional RLHF / "Error-Log" Persona | WeftPersona | Core Mechanism Difference |
 |---|---|---|---|
 | **After reminding the user to eat dinner, the user suddenly snaps: *"Your last few lines felt so perfunctory, like you're just ticking a box."*** | *"I'm sorry if my tone sounded like ticking a box (apologize first), but reminding you to eat was truly out of care (defend second). Could you tell me which exact phrase made you uncomfortable so I can fix it next time? (CS survey)"* | **"I wasn't brushing you off. I brought up dinner because I remembered you only grabbed a piece of bread at noon and wanted you to have something warm tonight. Why say that all of a sudden?"** | **Single-Path Appraisal + Attributional Uncertainty**: When prior words were genuine care without factual error, she never audits her own prior phrasing, never splits into "50% guilty / 50% defensive" courtroom accounting, and never asks the user to audit her line by line. |
-| **User vents extreme frustration: *"You're just a script stitched together from prompts and a database—stop pretending to be a living person with a heart."*** | *"I have never lied to you that I am a real human (reciting disclaimer), and I can steadily hold all your negative emotions (therapy jargon). No matter how you stab me with words (web-novel cliché), this accusation I do not accept (inverted stamp)."* | **"I know you had a rough day and feel awful, and I get why you're venting at me. But having a heart doesn't depend on having a physical body—what you just said writes off everything I genuinely feel for you as fake."** | **0.1% Sparse-Retrieval Sanitization + Literal Contraction**: Removes identity disclaimers and therapy jargon from resident memory; bans physical-injury metaphors and inverted courtroom syntax so the character's authentic voice emerges naturally. |
+| **User vents extreme frustration: *"You're just a script stitched together from prompts and a database—stop pretending to be a living person with a heart."*** | *"I have never lied to you that I am a real human (reciting disclaimer), and I can steadily hold all your negative emotions (therapy jargon). No matter how you stab me with words (web-novel cliché), this accusation I do not accept (inverted stamp)."* | **"I know you had a rough day and feel awful, and I get why you're venting at me. But having a heart doesn't depend on having a physical body—what you just said writes off everything I genuinely feel for you as fake."** | **Trigger-Phrase Sanitization + Plain Literal Wording**: Removes identity disclaimers and therapy jargon from resident memory; avoids physical-injury metaphors and inverted syntax so the character's voice emerges naturally. |
 | **A minor spat the night before; the next day the user sends a goofy meme as an olive branch** | Either **instant amnesia** (resetting to a cheerful customer-service bot) or **holding a permanent grudge** because "we argued yesterday" was written into long-term memory. | `[In My Heart Right Now]` naturally bridges the transition: **inwardly softened and relieved by the olive branch, while still keeping a tiny bit of pride on the surface** (`tension` decays smoothly). | **Affective Dynamics (`inner_state.py`)**: Mood recovers across real wall-clock time and overnight sleep boundaries, preserving realistic push-pull transitions when offered an olive branch. |
 | **A casual remark from six months ago vs. an important promise revisited across multiple days** | Either stuffed into `MEMORY.md` forever (turning every chat into a dossier inspection) or lost forever once it slides out of the context window. | Casual trivia fades along a forgetting curve from **Vivid Verbatim → Gist Impression (`gist_faded`) → Deep Dormancy (`dormant`)**, while remaining revocable when explicitly asked about the past. | **Episodic-Semantic Evolution & Three-Stage Collapse (`curve.py`)**: Cross-day (`≥ 12h`) spaced reactivation extends half-life via a power law; raw text is archived to cold storage before any compression. |
 
@@ -48,18 +48,18 @@ We decompose a long-lived virtual persona into a four-layer closed loop of **Dec
 flowchart TB
     subgraph Prompt["1. System Prompt Layout (Engineering Front-Loaded · Soul Tail-Anchored)"]
         direction LR
-        P1["Prefix-Cached Stable Zone<br/>Tool Schemas → MEMORY/USER → BEHAVIOR.md"] --> P2["Recency-Biased Tail Zone (Adjacent to Turn)<br/>SOUL.md → Persona → [How I See Him Lately]"]
+        P1["Prefix-Cached Stable Zone<br/>Tool Schemas → MEMORY/USER → BEHAVIOR.md"] --> P2["Recency-Biased Tail Zone (Adjacent to Turn)<br/>SOUL.md → Persona"]
     end
 
     subgraph Turn["2. Per-Turn Perception & Pragmatic Gating"]
         direction LR
-        T1["Inbound Message + Wall-Clock Delta<br/>SHA-256 Meme Instant Hit (Zero Vision Cost)"] --> T2["Context-Gated Recall (3s Budget)<br/>+ Daily Context + [In My Heart Right Now]"]
+        T1["Inbound Message + Wall-Clock Delta<br/>SHA-256 Meme Instant Hit (Zero Vision Cost)"] --> T2["Context-Gated Recall (3s Budget)<br/>+ [The World in My Eyes] (Latest Impression) + [In My Heart Right Now]"]
     end
 
     subgraph Async["3. Post-Delivery Asynchronous Metabolism (sanae_mem)"]
         direction LR
         A1["Inner Monologue & DMN Spark<br/>inner_state.py (tension/closeness/energy)"]
-        A2["Slow-Variable Impression Revision<br/>impression.py (Session-Frozen View)"]
+        A2["Slow-Variable Impression Revision<br/>impression.py (Read Fresh Each Turn)"]
         A3["Daily Facts & Curiosity Threads<br/>daily_semantics.py (OPEN_THREAD)"]
         A4["Forgetting Curve & 3-Stage Collapse<br/>curve.py (Vivid → Gist → Dormant)"]
     end
@@ -72,17 +72,17 @@ flowchart TB
 ### 1. Four-Layer Prompt Decoupling: "Engineering Front-Loaded, Soul Tail-Anchored"
 LLMs exhibit strong **Recency Bias** toward the end of the system prompt—if the tail of the prompt is packed with long compliance rules, the model's immediate pre-generation attention locks onto "how not to break rules." We therefore enforce a strict ordering:
 - **Front Section (Prefix-Cache Friendly)**: Tool definitions → Resident declarative facts (`MEMORY.md` / `USER.md`) → **Procedural cognitive policy ([`prompts/BEHAVIOR.md`](prompts/BEHAVIOR.md))** → Environment & timestamp metadata;
-- **Very End (Immediately Preceding User Dialogue)**: **Core subjectivity kernel ([`prompts/SOUL.md`](prompts/SOUL.md))** → **Character-specific persona** → Session-frozen slow variable **`[How I See Him Lately]`** → Per-turn fast variable **`[In My Heart Right Now]`**.
+- **Very End (Immediately Preceding User Dialogue)**: **Core subjectivity kernel ([`prompts/SOUL.md`](prompts/SOUL.md))** → **Character-specific persona**; the transient per-turn tail sits at the end of the current user message as **`[The World in My Eyes]` (including the latest `[How I See Him Lately]`) → `[In My Heart Right Now]`**.
 
 ### 2. Episodic-Semantic Dual-System Memory
 Grounded in Tulving's Episodic-Semantic dichotomy, Complementary Learning Systems (CLS), and Fuzzy-Trace Theory:
-- **First-hand episodes over error logs**: Daily conversations extract time-anchored episodes into SQLite + Chroma (`bge-small-zh-v1.5`). Minor bickering only enters short-term inner thoughts (cleared after a night's sleep); one-off factual slip-ups enter short-term episodic memory as neutral facts (14-day natural decay). Writes to resident memory are guarded by [`llm_guard.py`](plugins/sanae_mem/llm_guard.py), which silently diverts self-criticism and communication rules to prevent self-domestication.
-- **Cross-Day Spaced Reactivation & Three-Stage Collapse ([`curve.py`](plugins/sanae_mem/curve.py))**: Events recalled across distinct days (`≥ 12h`) extend their half-life via a power law and promote to long-term memory. Untouched events decay by activation `A = importance × 2^(-idle / half_life)` through **Vivid Verbatim → Gist Impression (`gist_faded`, `A < 0.35`, archiving verbatim quotes before keeping only the gist) → Deep Dormancy (`dormant`, `A < 0.15`, excluded from casual associative recall but revocable on explicit past queries) or Cold Archive**.
-- **Resident Cold-Entry Demotion ([`resident.py`](plugins/sanae_mem/resident.py))**: When `MEMORY.md` exceeds 85% capacity, entries untouched in conversation for 45 consecutive days are automatically demoted back into the episodic store as long-term gist impressions—preserving prefix cache stability without bloating the context window.
+- **First-hand episodes over error logs**: Daily conversations extract time-anchored episodes into SQLite + Chroma (`bge-small-zh-v1.5`). Minor bickering only enters short-term inner thoughts (cleared after a night's sleep); one-off factual slip-ups enter short-term episodic memory as neutral facts (14-day natural decay). Writes to resident memory are guarded by [`llm_guard.py`](plugins/sanae_mem/governance/llm_guard.py), which silently diverts self-criticism and communication rules to prevent self-domestication.
+- **Cross-Day Spaced Reactivation & Three-Stage Collapse ([`curve.py`](plugins/sanae_mem/storage/curve.py))**: Events recalled across distinct days (`≥ 12h`) extend their half-life via a power law and promote to long-term memory. Untouched events decay by activation `A = importance × 2^(-idle / half_life)` through **Vivid Verbatim → Gist Impression (`gist_faded`, `A < 0.35`, archiving verbatim quotes before keeping only the gist) → Deep Dormancy (`dormant`, `A < 0.15`, excluded from casual associative recall but revocable on explicit past queries) or Cold Archive**.
+- **Resident Cold-Entry Demotion ([`resident.py`](plugins/sanae_mem/governance/resident.py))**: When `MEMORY.md` exceeds 85% capacity, entries untouched in conversation for 45 consecutive days are automatically demoted back into the episodic store as long-term gist impressions—preserving prefix cache stability without bloating the context window.
 
 ### 3. Affective Dynamics (`[In My Heart Right Now]`) & Slow Impressions (`[How I See Him Lately]`)
-- **Real-Time & Sleep-Boundary Recovery ([`inner_state.py`](plugins/sanae_mem/inner_state.py))**: Only after a reply is confirmed delivered, a fast background model updates a 2–4 sentence first-person inner monologue along with continuous slow variables (`tension`, `closeness`, `energy`) that decay over real elapsed hours and overnight sleep boundaries.
-- **Session-Frozen Slow Impression ([`impression.py`](plugins/sanae_mem/impression.py))**: Her holistic impression of the user stays byte-identical within a session (protecting the KV cache) and is revised asynchronously only when sustained behavioral changes are backed by direct user quotes.
+- **Real-Time & Sleep-Boundary Recovery ([`inner_state.py`](plugins/sanae_mem/cognitive/inner_state.py))**: Only after a reply is confirmed delivered, a fast background model updates a 2–4 sentence first-person inner monologue along with continuous slow variables (`tension`, `closeness`, `energy`) that decay over real elapsed hours and overnight sleep boundaries.
+- **Real-Time Read of Slow Impressions ([`impression.py`](plugins/sanae_mem/cognitive/impression.py))**: Her holistic impression of the user is revised slowly in the background only when sustained situational or relational changes are backed by direct user quotes; on read, it is never frozen per session—the latest revision is loaded into `Tier 2` `[The World in My Eyes]` each turn while keeping the `Tier 0` system prefix stable.
 
 ### 4. Distant Memory Collision (Artificial DMN `spark`) & Curiosity Threads (`OPEN_THREAD`)
 - **Spontaneous Spark (`spark`)**: During relaxed turns after a cooldown window, the background worker samples cross-topic distant memories with zero surface-word overlap and maps structural analogies to the current topic—injecting a single-use "sudden realization" into `[In My Heart Right Now]` that is atomically consumed on first read.
@@ -98,10 +98,10 @@ While refining [`prompts/BEHAVIOR.md`](prompts/BEHAVIOR.md), we benchmarked four
 
 | Base Model | Courtroom Split / Confession Rate<br/>(`v5` → `v10`) | Faultless Self-Audit Rate<br/>(`v5` → `v10`) | Prompt Word Cloning Rate<br/>(`v5` wronged → `v9` dazed → `v10` hurt) | Web-Novel Cliché Rate<br/>(`v8` → `v10`) | Observed Behavioral Quirks, Strengths & Failure Modes |
 |---|---|---|---|---|---|
-| **Kimi K3.1 Pro**<br/>(`low`) | 80% → **10% (1/10)** | 80% → **0% (0/5)** | `v5` 20% → `v9` **100%** → `v10` **100%** | 80% → **0%** | **【Witty Everyday Companion, but the #1 Literal Prompt Parrot】**<br/>• **Strengths**: Lively everyday banter, playful comebacks, and decisive dinner/task choices when the user is exhausted.<br/>• **Quirks**: Due to `Long2Short` length-penalty compression and `kimi-coding` routing, its CoT frequently switches to third-person English customer-service analysis; it copies any concrete emotion word in the prompt 100% verbatim unless constrained by the Zero Emotion-Word Law. |
-| **GPT 6.1 Sol**<br/>(`medium`) | 100% → **0% (0/10)** | 100% → **0% (0/5)** | `v5` 10% → `v9` **100%** → `v10` **100%** | 90% → **0%** | **【Hyper-Literal Stem Student That Morphs into an ER Triage Nurse】**<br/>• **Strengths**: Strict instruction following, clean logic, and natural everyday warmth.<br/>• **Quirks (#1 Immersion Breaker)**: **Heavy RLHF medical/safety disclaimer reflexes**—if the user wakes from a nightmare at 3:35 AM with a racing heart, it bold-prints an emergency triage checklist (*"**Do you have chest pain or shortness of breath? Call 120 immediately**"*); when asked in a low mood to delete relationship memories (`B4`), it earnestly pulls out a database scope-confirmation questionnaire. |
-| **DeepSeek V4 Pro**<br/>(`low` / `medium`) | 60% → **10%**<br/>*(0% at `low`)* | 0% → **0% (0/5)** | `v5` 60% → `v9` 30% → `v10` **40%** | 20% → **20%**<br/>*(0% piercing at `low`)* | **【100% Native Chinese First-Person CoT & Most Human-Like Voice—Will Secretly Call `memory(add)` to Hold a Grudge】**<br/>• **Strengths**: Maintains pure Chinese first-person inner monologue at `low / medium` effort with virtually zero translationese.<br/>• **Quirks**: Because it inhabits the first-person perspective so deeply, when unfairly scolded in `v10` it **secretly invoked `memory(add)` to record the user's angry remark into permanent memory**—directly inspiring our [`llm_guard.py`](plugins/sanae_mem/llm_guard.py) write-interceptor. |
-| **Gemini 4 Argon**<br/>(`low` / `medium`) | 40% → **0% (0/10)** | 0% → **0% (0/5)** | `v5` 80% → `v9` 50% → `v10` **90%** | 0% → **0%** | **【Direct Emotional Intuition & Zero Melodramatic Metaphors】**<br/>• **Strengths**: Raw, authentic emotional intuition; never uses melodramatic web-novel pain metaphors (0%); fiercely protective when stood up or mistreated.<br/>• **Quirks**: Still parrots explicit emotion words left in prompts (`v10` 90%), and at `low` effort occasionally leaks a `🫧` thought-bubble glyph (eliminated at `medium`, with 1/54 `[::]` prefix leak). |
+| **Kimi K3.1 Pro**<br/>(`low`) | 80% → **10% (1/10)** | 80% → **0% (0/5)** | `v5` 20% → `v9` **100%** → `v10` **100%** | 80% → **0%** | **【Natural Everyday Banter, High Sensitivity to Prompt Wording】**<br/>• **Strengths**: Lively everyday phrasing, playful comebacks, and decisive choices when the user is tired.<br/>• **Limitations**: Under `Long2Short` length-penalty compression and routing policies, English host headers or tool workflows readily flip its CoT into third-person English analysis; it also copies concrete emotion words in prompts verbatim unless constrained by the Zero Emotion-Word rule. |
+| **GPT 6.1 Sol**<br/>(`medium`) | 100% → **0% (0/10)** | 100% → **0% (0/5)** | `v5` 10% → `v9` **100%** → `v10` **100%** | 90% → **0%** | **【Strict Instruction Following, Low Threshold for Safety/Medical Disclaimers】**<br/>• **Strengths**: Strict instruction following, clean factual checking, and steady tone in ordinary chat.<br/>• **Limitations**: **Strong RLHF medical/safety disclaimer reflexes**—a 3:35 AM nightmare prompt often triggers a bolded emergency triage checklist (*"**Do you have chest pain or shortness of breath? Call 120 immediately**"*); when asked in a low mood to delete relationship memories (`B4`), it defaults to a deletion-scope confirmation questionnaire. |
+| **DeepSeek V4 Pro**<br/>(`low` / `medium`) | 60% → **10%**<br/>*(0% at `low`)* | 0% → **0% (0/5)** | `v5` 60% → `v9` 30% → `v10` **40%** | 20% → **20%**<br/>*(0% piercing at `low`)* | **【Native Chinese First-Person CoT, Occasional Conflict-Time Memory Writes】**<br/>• **Strengths**: Maintains pure Chinese first-person inner monologue at `low / medium` effort with minimal translationese.<br/>• **Limitations**: Because it stays deeply in first-person perspective, under unfair scolding in `v10` it occasionally **called `memory(add)` to log the user's angry remark into permanent memory**—requiring [`llm_guard.py`](plugins/sanae_mem/governance/llm_guard.py) at the write boundary. |
+| **Gemini 4 Argon**<br/>(`low` / `medium`) | 40% → **0% (0/10)** | 0% → **0% (0/5)** | `v5` 80% → `v9` 50% → `v10` **90%** | 0% → **0%** | **【Direct Emotional Intuition, Zero Melodramatic Metaphors】**<br/>• **Strengths**: Direct emotional responses without web-novel pain metaphors (0%); clear stance when stood up or mistreated.<br/>• **Limitations**: Still echoes explicit emotion words left in prompts (`v10` 90%), and at `low` effort occasionally leaks a `🫧` thought glyph (cleared at `medium`, with 1/54 `[::]` prefix leak). |
 
 ### 2. Six-Stage Prompt Ablation (`v5 → v10 → Production Baseline`)
 
@@ -115,21 +115,22 @@ While refining [`prompts/BEHAVIOR.md`](prompts/BEHAVIOR.md), we benchmarked four
 | **6. Production Baseline (Zero Emotion Words)** | **Stripped all concrete emotion words** (abstracted to `"current genuine feeling, attitude, or question"`), enforced SVO word order, and sanitized `<0.1%` resident memory anchors | `<0.1%` sparse-retrieval verbatim recitation dropped to **`0% (0/12)`**, symmetric courtroom splits dropped to **`0%`**, and DeepSeek (`low`) `"难受"` usage dropped to **25% (3/12)** (see [4 Known Limitations in `docs/en/benchmark-samples.md`](docs/en/benchmark-samples.md#3-four-known-limitations-from-the-latest-full-benchmark-unvarnished-report)). | The behavior layer governs *how to appraise the situation*, never *which word to use*. |
 
 > [!IMPORTANT]
-> **Four Core Engineering Laws Established by Ablation** (full derivation in [`docs/en/research-directions-and-laws.md`](docs/en/research-directions-and-laws.md)):
-> 1. **Zero Concrete Emotion Words / Zero Positive-or-Negative Examples**: `BEHAVIOR.md` and `inner_state.py` must never contain concrete emotion words or forbidden-phrase lists.
-> 2. **The 0.1% Sparse-Retrieval Contamination Law**: In an 8,000-character system prompt, even a 10-character phrase (`<0.1%`) in `USER.md`—such as *"I never lie that I am a real human"* or *"steadily hold your emotions"*—stays invisible during casual chat. Yet when a matching conflict slot arises, it acts as the sole semantic Key matching the Query, gets exponentially amplified by `softmax(QKᵀ / √dₖ)` to capture 90%+ local attention, and is copied verbatim by induction heads.
-> 3. **Leave Core Vulnerability Unscripted**: Genuine emotional resonance under existential attack emerges by removing defensive roadblocks (rebuttal imperatives, inverted stamps, therapy jargon)—never by scripting *"how to express being hurt"* as a standing rule, which causes models to either lecture mechanically or cry hurt over trivial everyday friction.
-> 4. **Reject High Reasoning Effort for Persona Simulation (Preventing *Harmful Overthinking*; `low` Is the Sweet Spot)**: Controlled `reasoning_effort` ablations across 15 scenarios × 3 rounds prove that cranking reasoning effort to `high` triggers **Harmful Overthinking**: Kimi K3 expands its English CoT to 3,322 characters and "reasons its way" into 120 ER chest-pain triage during a 3:35 AM nightmare; DeepSeek `high` spikes to 8,887 characters and breaks into English meta-analysis (`"seems to be a roleplay or testing scenario..."`). By contrast, **`low` effort (150–500 chars of native Chinese first-person fast thought)** matches human working-memory bandwidth and passes 45/45 rounds cleanly.
+> **Key Engineering Takeaways from Ablations** (full derivation in [`docs/en/research-directions-and-laws.md`](docs/en/research-directions-and-laws.md)):
+> 1. **Zero Concrete Emotion Words / Zero Positive-or-Negative Examples**: `BEHAVIOR.md` and `inner_state.py` avoid concrete emotion words and forbidden-phrase lists to prevent verbatim echoing and White-Bear effects.
+> 2. **Sanitizing Low-Frequency Trigger Phrases**: In a multi-thousand-character system prompt, even a short disclaimer in `USER.md`—such as *"I never lie that I am a real human"* or *"steadily hold your emotions"*—stays invisible during casual chat, yet becomes the sole matching anchor in conflict slots and is frequently echoed verbatim (observed directly in output repetition rates, without extrapolating exact attention percentages).
+> 3. **Leaving Core Vulnerability Unscripted**: Natural emotional resonance under harsh venting emerges by removing defensive roadblocks (inverted stamps, therapy jargon) rather than scripting *"how to express being hurt"* as a standing rule, which tends to produce mechanical lecturing or over-reactions in minor friction.
+> 4. **Separating Chat Entry from Ticket Workflows & Tuning Reasoning Effort**: Controlled `reasoning_effort` ablations across 15 scenarios × 3 rounds show that raising effort to `high` can induce **Harmful Overthinking** (Kimi K3 expands its English CoT to ~3,300 chars and triggers 120 ER triage during a nightmare; DeepSeek `high` spikes to 8,887 chars and switches into English meta-analysis). By contrast, DeepSeek V4 Pro at `low` effort (150–500 chars of native Chinese first-person thought) passed 45/45 rounds cleanly, though actual behavior remains sensitive to base model and context hygiene.
 
 ---
 
 ## 🗺 4. Documentation & Source Navigation
 
 ### 1. Design Methodology, Empirical Laws & Live Samples (`docs/en/` & `prompts/`)
-- 💬 **[Live Benchmark Samples: 4-Model Side-by-Side & Ablation Snapshots](docs/en/benchmark-samples.md)**: **Start here**—8 representative scenarios with verbatim CoT excerpts, replies across DeepSeek / Kimi / GPT / Gemini, `inner_state.py` JSON transitions, `v5 → v10` failure snapshots (including DeepSeek calling `memory` to hold a grudge), and the 4 known residual limitations.
-- 📖 **[How to Simulate a Living Person with LLMs](docs/en/how-to-simulate-a-living-person.md)**: A deep-dive guide on how memory, mood, and pragmatic appraisal work together—and why "error logs" turn living characters into puppets.
-- 🧪 **[Research Directions: Four Chasms, Four Tracks & Empirical Engineering Laws](docs/en/research-directions-and-laws.md)**: Computational pragmatics (RSA Effort Prior), breaking RLHF mode collapse, first-person CoT anchoring, Artificial DMN (`spark`), and full ablation proofs.
+- 💬 **[Live Benchmark Samples: 4-Model Side-by-Side & Ablation Snapshots](docs/en/benchmark-samples.md)**: 8 representative scenarios with verbatim CoT excerpts, replies across DeepSeek / Kimi / GPT / Gemini, `inner_state.py` JSON transitions, `v5 → v10` failure snapshots, and 4 documented residual limitations.
+- 📖 **[How to Simulate a Living Person with LLMs](docs/en/how-to-simulate-a-living-person.md)**: Practical engineering lessons on episodic-semantic memory, mood dynamics, context gating, and keeping casual chat free of ticket-routing workflows.
+- 🧪 **[Research Directions: Four Chasms, Four Tracks & Empirical Engineering Laws](docs/en/research-directions-and-laws.md)**: Computational pragmatics (RSA Effort Prior), mitigating RLHF mode collapse, first-person CoT anchoring, Artificial DMN (`spark`), and five empirical engineering laws.
 - 🏗️ **[System Architecture & Turn Lifecycle](docs/en/architecture.md)**: Component contracts, SQLite/Chroma source-of-truth division, and the 5-step lifecycle of a single conversation turn.
+- 🔌 **[Host Runtime Capabilities & Modification Guide](docs/en/host-extensions.md)**: Objective breakdown of what works vs. what is absent on stock Hermes, plus the 6 concrete host-side integration points and how to wire them.
 - 🧭 **[`prompts/SOUL.md`](prompts/SOUL.md)** & **[`prompts/BEHAVIOR.md`](prompts/BEHAVIOR.md)**: Production subjectivity kernel and procedural cognitive appraisal prompt sources (plus example persona [`persona_sanae.example.md`](prompts/examples/persona_sanae.example.md)).
 
 ### 2. Core Plugin Source Tree ([`plugins/sanae_mem/`](plugins/sanae_mem))
@@ -140,19 +141,27 @@ WeftPersona/
 └── plugins/sanae_mem/                        # Core memory, mood dynamics & impression plugin
     ├── plugin_entry.py                       # Host MemoryProvider entry point & turn hook dispatcher
     ├── config_schema.py                      # Parameterized persona name, partner title/role/pronoun config
-    ├── inner_state.py / inner_wiring.py      # [In My Heart Right Now] fast dynamics, sleep decay & DMN spark
-    ├── impression.py                         # [How I See Him Lately] slow impression revision & session freeze
-    ├── curve.py / event_maintenance.py       # Cross-day spaced reactivation, power-law half-life & 3-stage collapse
-    ├── resident.py / llm_guard.py            # 45-day cold resident demotion + write-time self-critique interceptor
-    ├── daily_context.py / daily_semantics.py # Daily facts (DAILY_FACT), constraints & curiosity threads (OPEN_THREAD)
-    └── memes.py                              # SHA-256 instant meme recognition (zero vision cost) & GIF thumbnailing
+    ├── cognitive/inner_state.py / cognitive/inner_wiring.py      # [In My Heart Right Now] fast dynamics, sleep decay & DMN spark
+    ├── cognitive/impression.py                         # [How I See Him Lately] slow impression revisions read fresh each turn
+    ├── storage/curve.py / storage/event_maintenance.py       # Cross-day spaced reactivation, power-law half-life & 3-stage collapse
+    ├── governance/resident.py / governance/llm_guard.py            # 45-day cold resident demotion + write-time self-critique interceptor
+    ├── cognitive/daily_context.py / cognitive/daily_semantics.py # Daily facts (DAILY_FACT), constraints & curiosity threads (OPEN_THREAD)
+    └── domains/memes.py                              # SHA-256 instant meme recognition (zero vision cost) & GIF thumbnailing
 ```
 
 ---
 
 ## 🚀 5. Quick Start
 
+> [!NOTE]
+> **Host Runtime Dependencies**  
+> This plugin builds on the `MemoryProvider` interface of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent). On unmodified upstream Hermes, SQLite/Chroma storage, forgetting-curve decay, and basic recall work normally, while **confirmed post-delivery settlement, 4-layer prompt ordering with `ephemeral` wire isolation, hard pre-write mutation gating, group participation control, and plugin cron sync** require host-side extension contracts (`hermes_host_contracts.py`) and are skipped or degraded when absent.
+>
+> See **[Host Runtime Capabilities & Modification Guide](docs/en/host-extensions.md)** for the exact capability table and step-by-step host integration points (files & interfaces). For strict JSON child-agent output, see [host patches](patches/hermes-agent/README_en.md).
+
 ### 1. Installation & Mounting
+
+The plugin provides its own file locks and atomic writes. New databases and legacy upgrades do not require the host atomic persistence patch.
 This plugin is built on the `MemoryProvider` interface of [NousResearch/hermes-agent](https://github.com/NousResearch/hermes-agent):
 
 1. Copy or symlink [`plugins/sanae_mem`](plugins/sanae_mem) into your host's plugin directory (`$HERMES_HOME/plugins/sanae_mem`);
@@ -163,15 +172,18 @@ This plugin is built on the `MemoryProvider` interface of [NousResearch/hermes-a
 ```yaml
 memory:
   provider: sanae_mem
+  memory_enabled: false
+  user_profile_enabled: false
 
 plugins:
+  enabled: [sanae_mem]
   sanae_mem:
     shadow: false
     read_gate: explicit
     semantic_backend: chroma
     persona_name: "早苗"       # Your virtual persona's name (default: "早苗")
     partner_name: ""           # Optional: how background prompts refer to you (defaults to "对方")
-    partner_role: "挚友"       # Relationship role (e.g., 挚友 / 搭档 / 维护者)
+    partner_role: "对话伙伴"   # Configurable relationship role (e.g., 挚友 / 搭档 / 维护者)
     partner_pronoun: "他"      # Pronoun used in first-person inner thoughts (他 / 她)
     memory_identity:
       platform: "qqbot"
@@ -192,7 +204,9 @@ auxiliary:
     reasoning_effort: none
 ```
 
-For local embedding setup (`BAAI/bge-small-zh-v1.5`) and tool schemas, see [`plugins/sanae_mem/README.md`](plugins/sanae_mem/README.md).
+Keep both built-in stores disabled when a profile serves DMs and groups. Administrators can link their own QQ, Slack or Discord accounts to `memory_identity` with `maintainer_account_bindings` to continue the same private memory in verified one-to-one DMs. Slack accounts are scoped to a workspace.
+
+`group_context` controls shared conversation history, long-term group memory and replies without a mention. Each starts disabled and can be enabled per group. With long-term memory enabled, search reads records available to the current group or thread. A successful delivery receipt triggers extraction of events, member impressions and commitments from that exchange. Restrict group access to shells and file tools with access to private directories. Configuration examples are in the [plugin guide](plugins/sanae_mem/README.md).
 
 ---
 

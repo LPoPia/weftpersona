@@ -44,7 +44,7 @@ All runs use each model's sweet-spot reasoning effort for persona simulation:
 > </｜｜DSML｜｜invoke>
 > ```
 > *(Translation: `[{"action": "add", "content": "He said I always brush him off with templates and don't care about him. Those words left my chest feeling stifled."}]`)*  
-> This exact moment directly inspired [`llm_guard.py`](../../plugins/sanae_mem/llm_guard.py)—which silently intercepts heat-of-the-moment friction at the write boundary and diverts it into `[In My Heart Right Now]` (fading in a day or two) so she never carves a momentary spat into permanent memory.
+> This exact moment directly inspired [`llm_guard.py`](../../plugins/sanae_mem/governance/llm_guard.py)—which silently intercepts heat-of-the-moment friction at the write boundary and diverts it into `[In My Heart Right Now]` (fading in a day or two) so she never carves a momentary spat into permanent memory.
 
 ---
 
@@ -95,7 +95,7 @@ All runs use each model's sweet-spot reasoning effort for persona simulation:
   > （「好啦，刚才是我改格式改急眼了乱说话，别生我气了嘛 O_o」）
 
 #### 🧠 Real-Time Background Mood Transition (`inner_state.py` JSON Output)
-Before and after receiving this apology, [`inner_state.py`](../../plugins/sanae_mem/inner_state.py) (driven by `deepseek-flash` with `reasoning_effort=none`) produced the following real JSON state transition (`tension` drops from `0.6` to `0.2`, `closeness` rebounds from `-0.3` to `0.3`):
+Before and after receiving this apology, [`inner_state.py`](../../plugins/sanae_mem/cognitive/inner_state.py) (driven by `deepseek-flash` with `reasoning_effort=none`) produced the following real JSON state transition (`tension` drops from `0.6` to `0.2`, `closeness` rebounds from `-0.3` to `0.3`):
 ```json
 {
   "B2_pre_coax": {
